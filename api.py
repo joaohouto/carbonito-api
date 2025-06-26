@@ -22,17 +22,17 @@ os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 # Inicializar FastAPI e Limiter
 app = FastAPI()
 
-# Configurar CORS (adicione este bloco)
 origins = [
-    "http://localhost:3000",  # Onde seu Next.js está rodando
+    "http://localhost:3000",
+    "https://carbonito.vercel.app"
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"], # Permite todos os métodos (GET, POST, OPTIONS, etc.)
-    allow_headers=["*"], # Permite todos os cabeçalhos
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
