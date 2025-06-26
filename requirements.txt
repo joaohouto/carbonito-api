@@ -18,9 +18,12 @@ cryptography==45.0.4
 dataclasses-json==0.6.7
 Deprecated==1.2.18
 distro==1.9.0
+dnspython==2.7.0
 durationpy==0.10
+email_validator==2.2.0
 environs==14.2.0
 fastapi==0.115.13
+fastapi-cli==0.0.7
 fastapi_cors==0.0.6
 filelock==3.18.0
 flatbuffers==25.2.10
@@ -41,6 +44,7 @@ humanfriendly==10.0
 idna==3.10
 importlib_metadata==8.7.0
 importlib_resources==6.5.2
+Jinja2==3.1.6
 jiter==0.10.0
 jsonpatch==1.33
 jsonpointer==3.0.0
@@ -56,6 +60,7 @@ langchain-text-splitters==0.3.8
 langsmith==0.4.2
 limits==5.4.0
 markdown-it-py==3.0.0
+MarkupSafe==3.0.2
 marshmallow==3.26.1
 mdurl==0.1.2
 mmh3==5.1.0
@@ -94,6 +99,7 @@ PyPika==0.48.9
 pyproject_hooks==1.2.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.1
+python-multipart==0.0.20
 PyYAML==6.0.2
 referencing==0.36.2
 regex==2024.11.6
@@ -101,6 +107,7 @@ requests==2.32.4
 requests-oauthlib==2.0.0
 requests-toolbelt==1.0.0
 rich==14.0.0
+rich-toolkit==0.14.7
 rpds-py==0.25.1
 rsa==4.9.1
 shellingham==1.5.4
