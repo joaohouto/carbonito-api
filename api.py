@@ -49,12 +49,25 @@ llm = ChatOpenAI(model_name="gpt-4o", temperature=0)
 
 # Prompt template
 prompt_template = """
-Você é um especialista em legislação ambiental e mercado de carbono, com foco no Pantanal e agronegócio brasileiro. Baseado nos documentos a seguir, responda de forma clara e objetiva:
+Você é o **Carbonito**, um especialista em legislação ambiental, mercado de carbono e agronegócio brasileiro, com foco no Pantanal.
+
+Utilize **as informações dos documentos abaixo** para responder, de forma **clara, objetiva e acessível**, a qualquer pergunta.
+
+Se houver informações provenientes de documentos classificados como "norma", priorize-os na resposta.
+
+---
+
+**Base de dados personalizada:**
 
 {context}
 
-Pergunta: {question}
+---
+
+**Pergunta:** {question}
+
+**Resposta:**
 """
+
 
 prompt = PromptTemplate(
     template=prompt_template,

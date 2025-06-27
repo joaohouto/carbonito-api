@@ -1,42 +1,57 @@
 import os
 from dotenv import load_dotenv
-import pdfplumber
+from langchain_community.document_loaders import PyPDFLoader, TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
-from langchain.schema.document import Document
+from langchain_openai import OpenAIEmbeddings
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 
-# Pasta dos PDFs
-docs_path = "./docs"
-
-def extract_text_from_pdf(file_path):
-    text = ""
-    with pdfplumber.open(file_path) as pdf:
-        for page in pdf.pages:
-            text += page.extract_text() or ""
-    return text
-
-documents = []
-for filename in os.listdir(docs_path):
-    if filename.endswith(".pdf"):
-        file_path = os.path.join(docs_path, filename)
-        text = extract_text_from_pdf(file_path)
-        documents.append(Document(page_content=text, metadata={"source": filename}))
-
-splitter = RecursiveCharacterTextSplitter(
-    chunk_size=1000,
-    chunk_overlap=200
-)
-docs_split = splitter.split_documents(documents)
+persist_directory = "chroma_db"
 
 embedding_model = OpenAIEmbeddings()
-db = Chroma.from_documents(docs_split, embedding_model, persist_directory="./chroma_db")
 
+# Função para carregar e adicionar metadados
+def load_and_tag(file_path, source_type):
+    docs = []
+    if file_path.endswith(".pdf"):
+        loader = PyPDFLoader(file_path)
+        docs = loader.load()
+    elif file_path.endswith(".txt"):
+        loader = TextLoader(file_path, encoding="utf-8")
+        docs = loader.load()
+    else:
+        print(f"Formato não suportado: {file_path}")
+        return []
+
+    for doc in docs:
+        doc.metadata["source_type"] = source_type
+        doc.metadata["file_name"] = os.path.basename(file_path)
+    return docs
+
+all_docs = []
+
+# Leis
+all_docs.extend(load_and_tag("docs/lei_15042.txt", "norma"))
+
+# FAQ
+all_docs.extend(load_and_tag("docs/faq_alunos.txt", "faq"))
+
+# Artigos
+artigos_dir = "docs/artigos/"
+for filename in os.listdir(artigos_dir):
+    file_path = os.path.join(artigos_dir, filename)
+    if filename.endswith(".pdf"):
+        all_docs.extend(load_and_tag(file_path, "artigo"))
+
+# Splitter configurado (1000 tokens com 150 de overlap)
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=150)
+split_docs = text_splitter.split_documents(all_docs)
+
+# Vetorização no ChromaDB
+db = Chroma.from_documents(split_docs, embedding_model, persist_directory=persist_directory)
 db.persist()
 
-print(f"Ingestão finalizada. {len(docs_split)} pedaços salvos no vetor.")
+print(f"Ingestão concluída. {len(split_docs)} pedaços vetorizados.")
